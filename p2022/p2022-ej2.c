@@ -1,6 +1,7 @@
 #include "LPC17xx.h"
 #include "lpc17xx_dac.h"
 #include "lpc17xx_timer.h"
+#include "lpc17xx_pinsel.h"
 
 #define FAST_MODE 0
 
@@ -18,6 +19,9 @@ void init_dac(void);
 int main(void) {
     SystemInit(); // Inicializar System clk
     
+    // Configurar pins
+    config_pins();
+
     // Inicializar el DAC
     init_dac();
 
@@ -28,6 +32,18 @@ int main(void) {
     while (1) {
         // La generación de la señal se maneja a través de interrupciones
     }
+}
+
+void config_pins(void) {
+    PINSEL_CFG_Type pin;
+    
+    // Configuracion del pin 0.26 como salida de DAC
+    pin.Portnum = PINSEL_PORT_0;
+    pin.Pinnum = PINSEL_PIN_26;
+    pin.Funcnum = PINSEL_FUNC_2;
+    pin.Pinmode = PINSEL_PINMODE_TRISTATE;
+    pin.OpenDrain = PINSEL_PINMODE_NORMAL;
+    PINSEL_ConfigPin(&pin);
 }
 
 void init_dac(void) {

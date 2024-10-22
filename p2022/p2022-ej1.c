@@ -1,5 +1,6 @@
 #include "LPC17xx.h"
 #include "lpc17xx_adc.h"
+#include "lpc17xx_pinsel.h"
 #include "lpc17xx_timer.h"
 
 #define NUM_DATOS 20
@@ -19,6 +20,9 @@ void guardar_datos(uint16_t valor, uint8_t canal);
 int main(void) {
     SystemInit(); // Inicializar System clk
     
+    // Configurar pins
+    config_pins();
+
     // Inicializar el ADC
     init_adc();
 
@@ -29,6 +33,24 @@ int main(void) {
     while (1) {
         // Las transferencias de ADC se controlan a través de interrupciones
     }
+}
+
+void config_pins(void) {
+    PINSEL_CFG_Type pin;
+
+    // Canal 2 ADC
+    pin.Portnum = PINSEL_PORT_0;
+    pin.Pinnum = PINSEL_PIN_25;
+    pin.Funcnum = PINSEL_FUNC_1;
+    pin.Pinmode = PINSEL_PINMODE_TRISTATE;
+    pin.OpenDrain = PINSEL_PINMODE_NORMAL;
+    PINSEL_ConfigPin(&pin);
+
+    // Canal 4 ADC
+    pin.Portnum = PINSEL_PORT_1;
+    pin.Pinnum = PINSEL_PIN_30;
+    pin.Funcnum = PINSEL_FUNC_2;
+    PINSEL_ConfigPin(&pin);
 }
 
 // Inicializar el ADC para los canales 2 y 4
